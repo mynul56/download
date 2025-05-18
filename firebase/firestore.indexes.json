@@ -1,0 +1,16 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "users",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "stripeCustomerId",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+    // Add other indexes as your application requires
+  ],
+  "fieldOverrides": []
+}

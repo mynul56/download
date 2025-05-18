@@ -1,0 +1,40 @@
+{
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log"
+      ],
+      "predeploy": [
+        "npm --prefix \"$RESOURCE_DIR\" run lint",
+        "npm --prefix \"$RESOURCE_DIR\" run build"
+      ],
+      // Define runtime environment (e.g., Node.js 18)
+      "runtime": "nodejs18"
+    }
+  ],
+  // Optional: Add hosting configuration if deploying the Next.js app via Firebase Hosting
+  // "hosting": {
+  //   "public": "../out", // Assuming static export, adjust if using SSR
+  //   "ignore": [
+  //     "firebase.json",
+  //     "**/.*",
+  //     "**/node_modules/**"
+  //   ],
+  //   "rewrites": [
+  //     // Add rewrites if needed, e.g., for SSR with Cloud Functions or Cloud Run
+  //     // {
+  //     //   "source": "**",
+  //     //   "function": "nextApp" // Example if using a function for SSR
+  //     // }
+  //   ]
+  // }
+}

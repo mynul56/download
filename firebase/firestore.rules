@@ -1,0 +1,30 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Allow users to read their own user document, which contains subscription status
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      // Allow creation during signup or when Stripe customer is first created
+      allow create: if request.auth != null && request.auth.uid == userId;
+      // Allow webhook function (or admin SDK) to update subscription status
+      allow write: if get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isAdmin == true; // Example: Only allow admins or service accounts
+       // More granularly: allow write only to specific fields if needed
+       // allow update: if request.auth != null && request.auth.uid == userId && request.resource.data.keys().hasOnly(['stripeCustomerId', 'stripeSubscriptionId', 'isSubscribed', 'subscriptionStatus']);
+       // NOTE: The simplest secure approach for webhooks is often to use the Admin SDK in the Cloud Function / API route,
+       // which bypasses these rules. Ensure your webhook endpoint is secure.
+    }
+
+    // Allow read access to peptide data (assuming it's public or managed elsewhere)
+    // If peptide data were in Firestore, rules would go here. Example:
+    // match /peptides/{peptideId} {
+    //   allow read: if true; // Or based on subscription: resource.data.isPremium == false || get(/databases/$(database)/documents/users/$(request.auth.uid)).data.isSubscribed == true
+    // }
+
+    // Default deny all other access
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
